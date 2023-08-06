@@ -1,0 +1,13 @@
+<div class="mb-3">
+  <a class="btn btn-primary" href="/memos/new">新規作成</a>
+</div>
+
+<ul>
+  <% @memo_titles.each do |memo_title| %>
+    <li><a href="/memos/<%= memo_title %>"><%= memo_title %></a></li>
+  <% end %>
+</ul>
+
+
+
+
