@@ -1,57 +1,85 @@
-#!/usr/bin/env ruby
-# frozen_string_literal: true
+require 'sinatra'
 
-require 'json'
-require 'cgi'
+set :environment, :production
 
-# メモのデータ操作クラス
-class Memo
-  MEMOS_PATH = './public/memos.json'
+def fetch_memo_titles
+  text_files = Dir.glob(File.join('./public/memos', '*.txt'))
+  text_files.map { |file| File.basename(file, '.txt') }
+end
 
-  class << self
-    def sanitize_str(str)
-      CGI.escapeHTML(str)
-    end
+get '/' do
+  redirect '/memos'
+end
 
-    def fetch_memo_list
-      json_data = File.read(MEMOS_PATH)
-      JSON.parse(json_data)
-    end
+get '/memos' do
+  # メモ一覧(ホーム画面)の表示
+  @memo_titles = fetch_memo_titles
+  @page_title = 'メモ一覧'
 
-    def fetch_memos_id_title
-      memo_list = fetch_memo_list
-      memo_list.map { |memo| { 'id' => memo['id'], 'title' => memo['title'] } }
-    end
+  erb :memos
+end
 
-    def add_new_memo(memo_title, memo_content)
-      memo_list = fetch_memo_list
-      max_id = memo_list.map { |memo| memo['id'] }.max || 0
-      sanitized_memo_title = CGI.escapeHTML(memo_title)
-      sanitized_memo_content = CGI.escapeHTML(memo_content)
-      new_memo_data = { 'id' => max_id + 1, 'title' => sanitized_memo_title, 'content' => sanitized_memo_content }
-      memo_list.push(new_memo_data)
-      File.write(MEMOS_PATH, JSON.generate(memo_list))
-    end
+get '/memos/new' do
+  # 新規メモ作成画面の表示
+  @page_title = '新規作成'
 
-    def fetch_memo_data(id, memo_list = nil)
-      memo_list = fetch_memo_list if memo_list.nil?
-      memo_list.find { |memo| memo['id'] == id.to_i }
-    end
+  erb :new
+end
 
-    def update_memo(id, memo_title, memo_content)
-      memo_list = fetch_memo_list
-      memo_data = fetch_memo_data(id, memo_list)
-      sanitized_memo_title = CGI.escapeHTML(memo_title)
-      sanitized_memo_content = CGI.escapeHTML(memo_content)
-      memo_data['title'] = sanitized_memo_title
-      memo_data['content'] = sanitized_memo_content
-      File.write(MEMOS_PATH, JSON.generate(memo_list))
-    end
+post '/memos' do
+  # 新規メモの保存
+  file_name = params[:memo_title]
+  file_path = "./public/memos/#{file_name}.txt"
 
-    def delete_memo(id)
-      memo_list = fetch_memo_list
-      memo_list.reject! { |memo| memo['id'] == id.to_i }
-      File.write(MEMOS_PATH, JSON.generate(memo_list))
-    end
+  File.open(file_path, "w") do |file|
+    file.puts(params[:memo_content])
   end
+
+  redirect '/memos'
+end
+
+get '/memos/:title' do |memo_title|
+  # メモの表示
+  @memo_title = memo_title
+  memo_file = "./public/memos/#{memo_title}.txt"
+  @memo_content = File.read(memo_file)
+
+  erb :show
+end
+
+get '/memos/:title/edit' do |memo_title|
+  # メモの編集画面の表示
+  @memo_title = memo_title
+  file_path = "./public/memos/#{memo_title}.txt"
+  File.open("./public/memos/#{memo_title}.txt", "r") do |file|
+    @memo_content = file.read
+  end
+
+  erb :edit
+end
+
+patch '/memos/:title' do |memo_title|
+  # メモの更新
+  file_name = params[:memo_title]
+
+  # タイトルが変わっていたら古いファイルを削除する
+  if memo_title != file_name
+    old_file_path = "./public/memos/#{memo_title}.txt"
+    File.delete(old_file_path) if File.exist?(old_file_path)
+  end
+
+  file_path = "./public/memos/#{file_name}.txt"
+  File.open(file_path, "w") do |file|
+    file.puts(params[:memo_content])
+  end
+
+  redirect '/memos'
+end
+
+delete '/memos/:title' do |memo_title|
+  # メモの削除
+  file_path = "./public/memos/#{memo_title}.txt"
+  File.delete(file_path) if File.exist?(file_path)
+
+  redirect '/memos'
 end
