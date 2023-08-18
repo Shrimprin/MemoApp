@@ -7,5 +7,8 @@ group :development do
   gem 'erb_lint', require: false
   gem 'rubocop-fjord', require: false
 end
+
+gem 'pg'
+gem 'securerandom'
 gem 'sinatra'
 gem 'webrick'
