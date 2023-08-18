@@ -26,8 +26,8 @@ class Memo
     def add_new_memo(memo_title, memo_content)
       memo_list = fetch_memo_list
       max_id = memo_list.map { |memo| memo['id'] }.max || 0
-      sanitized_memo_title = CGI.escapeHTML(memo_title)
-      sanitized_memo_content = CGI.escapeHTML(memo_content)
+      sanitized_memo_title = memo_title
+      sanitized_memo_content = memo_content
       new_memo_data = { 'id' => max_id + 1, 'title' => sanitized_memo_title, 'content' => sanitized_memo_content }
       memo_list.push(new_memo_data)
       File.write(MEMOS_PATH, JSON.generate(memo_list))
@@ -41,8 +41,8 @@ class Memo
     def update_memo(id, memo_title, memo_content)
       memo_list = fetch_memo_list
       memo_data = fetch_memo_data(id, memo_list)
-      sanitized_memo_title = CGI.escapeHTML(memo_title)
-      sanitized_memo_content = CGI.escapeHTML(memo_content)
+      sanitized_memo_title = memo_title
+      sanitized_memo_content = memo_content
       memo_data['title'] = sanitized_memo_title
       memo_data['content'] = sanitized_memo_content
       File.write(MEMOS_PATH, JSON.generate(memo_list))

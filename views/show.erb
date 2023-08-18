@@ -1,6 +1,6 @@
 <div class="">
-  <h2><%= @memo_data["title"] %></h2>
-  <pre><%= @memo_data["content"] %></pre>
+  <h2><%= CGI.escapeHTML(@memo_data["title"]) %></h2>
+  <pre><%= CGI.escapeHTML(@memo_data["content"]) %></pre>
 </div>
 
 <div class="d-flex mb-3">

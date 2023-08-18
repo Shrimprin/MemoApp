@@ -4,6 +4,6 @@
 
 <ul>
   <% @memos_id_title.each do |memo_id_title| %>
-    <li><a href="/memos/<%= memo_id_title["id"] %>"><%= memo_id_title["title"] %></a></li>
+    <li><a href="/memos/<%= memo_id_title["id"] %>"><%= CGI.escapeHTML(memo_id_title["title"]) %></a></li>
   <% end %>
 </ul>
