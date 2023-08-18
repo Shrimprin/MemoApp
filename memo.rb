@@ -2,17 +2,12 @@
 # frozen_string_literal: true
 
 require 'json'
-require 'cgi'
 
 # メモのデータ操作クラス
 class Memo
   MEMOS_PATH = './public/memos.json'
 
   class << self
-    def sanitize_str(str)
-      CGI.escapeHTML(str)
-    end
-
     def fetch_memo_list
       json_data = File.read(MEMOS_PATH)
       JSON.parse(json_data)
