@@ -15,6 +15,9 @@
     * password : ユーザーがDBに接続するパスワード
     * port : DBのポート番号
 4. アプリケーションを起動する。
+    ```
+    bundle exec ruby router.rb
+    ```
 5. ブラウザからアプリケーションにアクセスする。\
 'http://localhost:4567'
 # 主な機能
