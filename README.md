@@ -8,12 +8,15 @@
     ```
     bundle install
     ```
-3. [config.yml](./config.yml)にメモを保存する任意のDBの情報を入力する。
-    * db : データベース名
+3. [config.yml](./config.yml)にメモを保存する任意のDBの情報を入力する。\
+  DBが存在しない場合、アプリケーション起動時に自動で作成されます。\
+  また、テーブルも自動で作成されます。
     * host : DBのホスト名
+    * db : DB名
     * user : DBに接続するユーザー名
     * password : ユーザーがDBに接続するパスワード
     * port : DBのポート番号
+
 4. アプリケーションを起動する。
     ```
     bundle exec ruby router.rb

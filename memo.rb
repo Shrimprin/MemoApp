@@ -8,24 +8,48 @@ require 'pg'
 class Memo
   MEMOS_TABLE = 'memos'
   class << self
-    def connet_to_db
+    def create_table
+      result = @conn.exec("SELECT * FROM information_schema.tables WHERE table_name = 'memos'")
+      @conn.exec('CREATE TABLE memos (id varchar(36) primary key, title varchar(255) not null, content text)') if result.values.empty?
+    end
+
+    def create_db
       config = YAML.load_file('config.yml')
-      dbname = config['db']
-      host = config['host']
-      user = config['user']
-      password = config['password']
-      port = config['port']
+      connection = PG.connect(
+        host: config['host'],
+        dbname: 'postgres',
+        user: config['user'],
+        password: config['password'],
+        port: config['port']
+      )
+      result = connection.exec("SELECT 1 FROM pg_database WHERE datname = '#{config['db']}'")
+      connection.exec("CREATE DATABASE #{config['db']} ENCODING 'UTF-8' TEMPLATE template0") if result.values.empty?
+    rescue PG::Error => e
+      puts "データベースの作成に失敗しました。: #{e.message}"
+    ensure
+      connection&.close
+    end
+
+    def connect_to_db
+      config = YAML.load_file('config.yml')
       begin
-        @conn = PG.connect(host:, dbname:, user:, password:, port:)
+        @conn = PG.connect(
+          host: config['host'],
+          dbname: config['db'],
+          user: config['user'],
+          password: config['password'],
+          port: config['port']
+        )
       rescue PG::ConnectionBad => e
         puts "DBに接続できません。config.ymlを確認してください。\n#{e}"
         exit
       end
     end
 
-    def create_memos_table
-      result = @conn.exec("SELECT * FROM information_schema.tables WHERE table_name = 'memos'")
-      @conn.exec('CREATE TABLE memos (id varchar(36) primary key, title varchar(255) not null, content text)') if result.values.empty?
+    def setup
+      create_db
+      connect_to_db
+      create_table
     end
 
     def fetch_memo_list

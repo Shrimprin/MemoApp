@@ -8,8 +8,7 @@ require './memo'
 set :environment, :production
 
 configure do
-  Memo.connet_to_db
-  Memo.create_memos_table
+  Memo.setup
 end
 
 get '/' do
