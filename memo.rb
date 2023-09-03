@@ -1,17 +1,35 @@
-#!/usr/bin/env ruby
 # frozen_string_literal: true
 
-require 'json'
 require 'securerandom'
+require 'yaml'
+require 'pg'
 
-# メモのデータ操作クラス
+# メモのデータ操作モジュール
 class Memo
-  MEMOS_PATH = './public/memos.json'
-
+  MEMOS_TABLE = 'memos'
   class << self
+    def connet_to_db
+      config = YAML.load_file('config.yml')
+      dbname = config['db']
+      host = config['host']
+      user = config['user']
+      password = config['password']
+      port = config['port']
+      begin
+        @conn = PG.connect(host:, dbname:, user:, password:, port:)
+      rescue PG::ConnectionBad => e
+        puts "DBに接続できません。config.ymlを確認してください。\n#{e}"
+        exit
+      end
+    end
+
+    def create_memos_table
+      result = @conn.exec("SELECT * FROM information_schema.tables WHERE table_name = 'memos'")
+      @conn.exec('CREATE TABLE memos (id varchar(36) primary key, title varchar(255) not null, content text)') if result.values.empty?
+    end
+
     def fetch_memo_list
-      json_data = File.read(MEMOS_PATH)
-      JSON.parse(json_data)
+      @conn.exec("SELECT * FROM #{MEMOS_TABLE}")
     end
 
     def fetch_memos_id_title
@@ -20,30 +38,28 @@ class Memo
     end
 
     def add_new_memo(memo_title, memo_content)
-      memo_list = fetch_memo_list
       id = SecureRandom.uuid
-      new_memo_data = { 'id' => id, 'title' => memo_title, 'content' => memo_content }
-      memo_list.push(new_memo_data)
-      File.write(MEMOS_PATH, JSON.generate(memo_list))
+      insert_query = "INSERT INTO #{MEMOS_TABLE} VALUES($1, $2, $3)"
+      insert_params = [id, memo_title, memo_content]
+      @conn.exec(insert_query, insert_params)
     end
 
-    def fetch_memo_data(id, memo_list = nil)
-      memo_list = fetch_memo_list if memo_list.nil?
-      memo_list.find { |memo| memo['id'] == id }
+    def fetch_memo_data(id)
+      select_query = "SELECT * FROM #{MEMOS_TABLE} WHERE id = $1"
+      select_params = [id]
+      @conn.exec(select_query, select_params).tuple_values(0)
     end
 
     def update_memo(id, memo_title, memo_content)
-      memo_list = fetch_memo_list
-      memo_data = fetch_memo_data(id, memo_list)
-      memo_data['title'] = memo_title
-      memo_data['content'] = memo_content
-      File.write(MEMOS_PATH, JSON.generate(memo_list))
+      update_query = "UPDATE #{MEMOS_TABLE} SET title = $1, content = $2 WHERE id = $3"
+      update_params = [memo_title, memo_content, id]
+      @conn.exec(update_query, update_params)
     end
 
     def delete_memo(id)
-      memo_list = fetch_memo_list
-      memo_list.reject! { |memo| memo['id'] == id }
-      File.write(MEMOS_PATH, JSON.generate(memo_list))
+      delete_query = "DELETE FROM #{MEMOS_TABLE} WHERE id = $1"
+      delete_params = [id]
+      @conn.exec(delete_query, delete_params)
     end
   end
 end

@@ -2,9 +2,15 @@
 # frozen_string_literal: true
 
 require 'sinatra'
+require 'cgi'
 require './memo'
 
 set :environment, :production
+
+configure do
+  Memo.connet_to_db
+  Memo.create_memos_table
+end
 
 get '/' do
   redirect '/memos'
@@ -34,17 +40,23 @@ end
 
 get '/memos/:id' do |id|
   # メモの表示
-  @memo_data = Memo.fetch_memo_data(id)
-  halt 404 if @memo_data.nil?
+  memo_data = Memo.fetch_memo_data(id)
+  halt 404 if memo_data.nil?
 
+  @memo_id = memo_data[0]
+  @memo_title = memo_data[1]
+  @memo_content = memo_data[2]
   erb :show
 end
 
 get '/memos/:id/edit' do |id|
   # メモの編集画面の表示
-  @memo_data = Memo.fetch_memo_data(id)
-  halt 404 if @memo_data.nil?
+  memo_data = Memo.fetch_memo_data(id)
+  halt 404 if memo_data.nil?
 
+  @memo_id = memo_data[0]
+  @memo_title = memo_data[1]
+  @memo_content = memo_data[2]
   erb :edit
 end
 
@@ -60,6 +72,11 @@ delete '/memos/:id' do |id|
   Memo.delete_memo(id)
 
   redirect '/memos'
+end
+
+error do
+  status 500
+  '500 Server Error'
 end
 
 not_found do
