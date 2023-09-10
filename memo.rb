@@ -25,7 +25,7 @@ class Memo
       result = connection.exec("SELECT 1 FROM pg_database WHERE datname = '#{config['db']}'")
       connection.exec("CREATE DATABASE #{config['db']} ENCODING 'UTF-8' TEMPLATE template0") if result.values.empty?
     rescue PG::Error => e
-      puts "データベースの作成に失敗しました。: #{e.message}"
+      STDERR.puts "データベースの作成に失敗しました。: #{e.message}"
     ensure
       connection&.close
     end
@@ -41,7 +41,7 @@ class Memo
           port: config['port']
         )
       rescue PG::ConnectionBad => e
-        puts "DBに接続できません。config.ymlを確認してください。\n#{e}"
+        STDERR.puts "DBに接続できません。config.ymlを確認してください。\n#{e}"
         exit
       end
     end
