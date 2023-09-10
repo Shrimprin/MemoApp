@@ -15,19 +15,19 @@ class Memo
 
     def create_db
       config = YAML.load_file('config.yml')
-      connection = PG.connect(
+      conn = PG.connect(
         host: config['host'],
         dbname: 'postgres',
         user: config['user'],
         password: config['password'],
         port: config['port']
       )
-      result = connection.exec("SELECT 1 FROM pg_database WHERE datname = '#{config['db']}'")
-      connection.exec("CREATE DATABASE #{config['db']} ENCODING 'UTF-8' TEMPLATE template0") if result.values.empty?
+      result = conn.exec("SELECT 1 FROM pg_database WHERE datname = '#{config['db']}'")
+      conn.exec("CREATE DATABASE #{config['db']} ENCODING 'UTF-8' TEMPLATE template0") if result.values.empty?
     rescue PG::Error => e
       STDERR.puts "データベースの作成に失敗しました。: #{e.message}"
     ensure
-      connection&.close
+      conn&.close
     end
 
     def connect_to_db
