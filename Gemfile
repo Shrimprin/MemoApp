@@ -2,12 +2,9 @@
 
 source 'https://rubygems.org'
 
-git_source(:github) { |_repo_name| 'https://github.com#/{repo_name}' }
-group :development do
-  gem 'erb_lint', require: false
-  gem 'rubocop-fjord', require: false
-end
-
+gem 'erb_lint'
+gem 'rubocop'
+gem 'rubocop-fjord'
 gem 'pg'
 gem 'securerandom'
 gem 'sinatra'
