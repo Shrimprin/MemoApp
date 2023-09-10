@@ -2,10 +2,7 @@
 # frozen_string_literal: true
 
 require 'sinatra'
-# require 'cgi'
 require './memo'
-
-set :environment, :production
 
 configure do
   Memo.setup
