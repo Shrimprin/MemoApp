@@ -2,7 +2,7 @@
 # frozen_string_literal: true
 
 require 'sinatra'
-require 'cgi'
+# require 'cgi'
 require './memo'
 
 set :environment, :production
