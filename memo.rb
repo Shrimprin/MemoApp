@@ -60,9 +60,8 @@ class Memo
     end
 
     def add_new_memo(memo_title, memo_content)
-      id = SecureRandom.uuid
-      insert_query = "INSERT INTO #{MEMOS_TABLE} VALUES($1, $2, $3)"
-      insert_params = [id, memo_title, memo_content]
+      insert_query = "INSERT INTO #{MEMOS_TABLE} (title, content) VALUES($1, $2)"
+      insert_params = [memo_title, memo_content]
       @conn.exec(insert_query, insert_params)
     end
 
