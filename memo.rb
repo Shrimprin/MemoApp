@@ -10,7 +10,7 @@ class Memo
   class << self
     def create_table
       result = @conn.exec("SELECT * FROM information_schema.tables WHERE table_name = 'memos'")
-      @conn.exec('CREATE TABLE memos (id varchar(36) primary key, title varchar(255) not null, content text)') if result.values.empty?
+      @conn.exec('CREATE TABLE memos (id uuid default gen_random_uuid() primary key, title varchar(255) not null, content text)') if result.values.empty?
     end
 
     def create_db
