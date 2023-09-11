@@ -54,7 +54,7 @@ class Memo
       create_table
     end
 
-    def fetch_memos_id_title
+    def find_memos
       memo_list = @conn.exec("SELECT * FROM #{MEMOS_TABLE}")
       memo_list.map { |memo| { 'id' => memo['id'], 'title' => memo['title'] } }
     end
@@ -65,10 +65,15 @@ class Memo
       @conn.exec(insert_query, insert_params)
     end
 
-    def fetch_memo_data(id)
+    def find_memo(id)
       select_query = "SELECT * FROM #{MEMOS_TABLE} WHERE id = $1"
       select_params = [id]
-      @conn.exec(select_query, select_params).tuple_values(0)
+      memo = @conn.exec(select_query, select_params).tuple_values(0)
+      {
+        id: memo[0],
+        title: memo[1],
+        content: memo[2]
+      }
     end
 
     def update_memo(id, memo_title, memo_content)

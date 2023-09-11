@@ -14,7 +14,7 @@ end
 
 get '/memos' do
   # メモ一覧(ホーム画面)の表示
-  @memos_id_title = Memo.fetch_memos_id_title
+  @memos_id_title = Memo.find_memos
   @page_title = 'メモ一覧'
 
   erb :memos
@@ -36,23 +36,17 @@ end
 
 get '/memos/:id' do |id|
   # メモの表示
-  memo_data = Memo.fetch_memo_data(id)
-  halt 404 if memo_data.nil?
+  @memo_data = Memo.find_memo(id)
+  halt 404 if @memo_data.nil?
 
-  @memo_id = memo_data[0]
-  @memo_title = memo_data[1]
-  @memo_content = memo_data[2]
   erb :show
 end
 
 get '/memos/:id/edit' do |id|
   # メモの編集画面の表示
-  memo_data = Memo.fetch_memo_data(id)
-  halt 404 if memo_data.nil?
+  @memo_data = Memo.find_memo(id)
+  halt 404 if @memo_data.nil?
 
-  @memo_id = memo_data[0]
-  @memo_title = memo_data[1]
-  @memo_content = memo_data[2]
   erb :edit
 end
 

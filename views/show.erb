@@ -1,13 +1,13 @@
 <div class="">
-  <h2><%= CGI.escapeHTML(@memo_title) %></h2>
-  <pre><%= CGI.escapeHTML(@memo_content) %></pre>
+  <h2><%= CGI.escapeHTML(@memo_data[:title]) %></h2>
+  <pre><%= CGI.escapeHTML(@memo_data[:content]) %></pre>
 </div>
 
 <div class="d-flex mb-3">
-  <form action="/memos/<%= @memo_id %>/edit" method="get">
+  <form action="/memos/<%= @memo_data[:id] %>/edit" method="get">
     <input type="submit" value="編集" class="btn btn-primary me-2">
   </form>
-  <form action="/memos/<%= @memo_id %>" method="post" onsubmit="return confirm('本当に削除しますか？');">
+  <form action="/memos/<%= @memo_data[:id] %>" method="post" onsubmit="return confirm('本当に削除しますか？');">
     <input type="hidden" name="_method" value="delete">
     <input type="submit" value="削除" class="btn btn-danger">
   </form>
