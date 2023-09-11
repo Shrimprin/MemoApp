@@ -12,7 +12,7 @@ class Memo
   class << self
     def create_table
       result = @conn.exec("SELECT * FROM information_schema.tables WHERE table_name = 'memos'")
-      @conn.exec('CREATE TABLE memos (id uuid default gen_random_uuid() primary key, title text not null, content text)') if result.values.empty?
+      @conn.exec("CREATE TABLE #{MEMOS_TABLE} (id uuid default gen_random_uuid() primary key, title text not null, content text)") if result.values.empty?
     end
 
     def create_db
@@ -27,7 +27,7 @@ class Memo
       result = conn.exec("SELECT 1 FROM pg_database WHERE datname = '#{config['db']}'")
       conn.exec("CREATE DATABASE #{config['db']} ENCODING 'UTF-8' TEMPLATE template0") if result.values.empty?
     rescue PG::Error => e
-      STDERR.puts "データベースの作成に失敗しました。: #{e.message}"
+      warn "データベースの作成に失敗しました。: #{e.message}"
     ensure
       conn&.close
     end
@@ -43,7 +43,7 @@ class Memo
           port: config['port']
         )
       rescue PG::ConnectionBad => e
-        STDERR.puts "DBに接続できません。config.ymlを確認してください。\n#{e}"
+        warn "DBに接続できません。config.ymlを確認してください。\n#{e}"
         exit
       end
     end
