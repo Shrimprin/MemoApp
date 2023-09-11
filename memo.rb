@@ -54,12 +54,8 @@ class Memo
       create_table
     end
 
-    def fetch_memo_list
-      @conn.exec("SELECT * FROM #{MEMOS_TABLE}")
-    end
-
     def fetch_memos_id_title
-      memo_list = fetch_memo_list
+      memo_list = @conn.exec("SELECT * FROM #{MEMOS_TABLE}")
       memo_list.map { |memo| { 'id' => memo['id'], 'title' => memo['title'] } }
     end
 
