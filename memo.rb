@@ -31,7 +31,9 @@ class Memo
       password: config['password'],
       port: config['port']
     )
-    result = conn.exec("SELECT 1 FROM pg_database WHERE datname = '#{config['db']}'")
+    select_query = 'SELECT 1 FROM pg_database WHERE datname = $1'
+    select_params = [config['db']]
+    result = conn.exec(select_query, select_params)
     conn.exec("CREATE DATABASE #{config['db']} ENCODING 'UTF-8' TEMPLATE template0") if result.values.empty?
   rescue PG::Error => e
     warn "データベースの作成に失敗しました。: #{e.message}"
