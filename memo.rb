@@ -4,7 +4,7 @@ require 'securerandom'
 require 'yaml'
 require 'pg'
 
-# メモのデータ操作モジュール
+# メモのデータ操作クラス
 class Memo
   MEMOS_TABLE = 'memos'
   private_constant :MEMOS_TABLE
