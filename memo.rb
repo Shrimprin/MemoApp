@@ -46,44 +46,41 @@ class Memo
   private
 
   def initialize
+    @config = YAML.load_file('config.yml')
     create_db
     connect_to_db
     create_table
   end
 
   def create_db
-    config = YAML.load_file('config.yml')
     conn = PG.connect(
-      host: config['host'],
+      host: @config['host'],
       dbname: 'postgres',
-      user: config['user'],
-      password: config['password'],
-      port: config['port']
+      user: @config['user'],
+      password: @config['password'],
+      port: @config['port']
     )
     select_query = 'SELECT 1 FROM pg_database WHERE datname = $1'
-    select_params = [config['db']]
+    select_params = [@config['db']]
     result = conn.exec(select_query, select_params)
-    conn.exec("CREATE DATABASE #{config['db']} ENCODING 'UTF-8' TEMPLATE template0") if result.values.empty?
+    conn.exec("CREATE DATABASE #{@config['db']} ENCODING 'UTF-8' TEMPLATE template0") if result.values.empty?
   rescue PG::Error => e
-    warn "データベースの作成に失敗しました。: #{e.message}"
+    warn "データベースの作成に失敗しました。config.ymlを確認してください。: #{e.message}"
+    exit
   ensure
     conn&.close
   end
 
   def connect_to_db
-    config = YAML.load_file('config.yml')
-    begin
-      @conn = PG.connect(
-        host: config['host'],
-        dbname: config['db'],
-        user: config['user'],
-        password: config['password'],
-        port: config['port']
-      )
-    rescue PG::ConnectionBad => e
-      warn "DBに接続できません。config.ymlを確認してください。\n#{e}"
-      exit
-    end
+    @conn = PG.connect(
+      host: @config['host'],
+      dbname: @config['db'],
+      user: @config['user'],
+      password: @config['password'],
+      port: @config['port']
+    )
+  rescue PG::ConnectionBad => e
+    warn "DBに接続できません。\n#{e}"
   end
 
   def create_table
