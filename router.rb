@@ -7,8 +7,13 @@ require './memo'
 class Router < Sinatra::Base
   enable :method_override
 
+  configure do
+    # プログラム起動時にMemoインスタンスを作成して、全てのリクエストに使いまわす
+    set :memo_instance, Memo.new
+  end
+
   before do
-    @memo = Memo.new
+    @memo = settings.memo_instance
   end
 
   get '/' do
