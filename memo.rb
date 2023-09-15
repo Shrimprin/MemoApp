@@ -15,12 +15,7 @@ class Memo
   def find_memo(id)
     select_query = "SELECT * FROM #{MEMOS_TABLE} WHERE id = $1"
     select_params = [id]
-    memo = @conn.exec(select_query, select_params).tuple_values(0)
-    {
-      id: memo[0],
-      title: memo[1],
-      content: memo[2]
-    }
+    @conn.exec(select_query, select_params)[0]
   end
 
   def add_new_memo(memo_title, memo_content)
