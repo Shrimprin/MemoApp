@@ -52,8 +52,8 @@ class Router < Sinatra::Base
 
   get '/memos/:id/edit' do |id|
     # メモの編集画面の表示
-    @memo_data = @memo.find_memo(id)
-    halt 404 if @memo_data.nil?
+    @memo = @memo.find_memo(id)
+    halt 404 if @memo.nil?
 
     erb :edit
   end
