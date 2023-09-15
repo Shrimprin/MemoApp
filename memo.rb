@@ -54,9 +54,10 @@ class Memo
       port: @config['port']
     )
     select_query = 'SELECT 1 FROM pg_database WHERE datname = $1'
-    select_params = [@config['db']]
+    db_name = conn.escape_string(@config['db']) # CREATE DATABASEはプレースホルダーが使えないためエスケープする
+    select_params = [db_name]
     result = conn.exec(select_query, select_params)
-    conn.exec("CREATE DATABASE #{@config['db']} ENCODING 'UTF-8' TEMPLATE template0") if result.values.empty?
+    conn.exec("CREATE DATABASE #{db_name} ENCODING 'UTF-8' TEMPLATE template0") if result.values.empty?
   rescue PG::Error => e
     warn "データベースの作成に失敗しました。config.ymlを確認してください。: #{e.message}"
     exit
