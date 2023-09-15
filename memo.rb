@@ -9,8 +9,7 @@ class Memo
   private_constant :MEMOS_TABLE
 
   def find_memos
-    memo_list = @conn.exec("SELECT * FROM #{MEMOS_TABLE}")
-    memo_list.map { |memo| { 'id' => memo['id'], 'title' => memo['title'] } }
+    @conn.exec("SELECT * FROM #{MEMOS_TABLE}")
   end
 
   def find_memo(id)

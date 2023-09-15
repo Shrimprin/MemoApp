@@ -22,7 +22,7 @@ class Router < Sinatra::Base
 
   get '/memos' do
     # メモ一覧(ホーム画面)の表示
-    @memos_id_title = @memo.find_memos
+    @memos = @memo.find_memos
     @page_title = 'メモ一覧'
 
     erb :memos
