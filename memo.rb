@@ -18,15 +18,15 @@ class Memo
     @conn.exec(select_query, select_params)[0]
   end
 
-  def add_new_memo(memo_title, memo_content)
+  def add_new_memo(title, content)
     insert_query = "INSERT INTO #{MEMOS_TABLE} (title, content) VALUES($1, $2)"
-    insert_params = [memo_title, memo_content]
+    insert_params = [title, content]
     @conn.exec(insert_query, insert_params)
   end
 
-  def update_memo(id, memo_title, memo_content)
+  def update_memo(id, title, content)
     update_query = "UPDATE #{MEMOS_TABLE} SET title = $1, content = $2 WHERE id = $3"
-    update_params = [memo_title, memo_content, id]
+    update_params = [title, content, id]
     @conn.exec(update_query, update_params)
   end
 

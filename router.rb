@@ -37,15 +37,15 @@ class Router < Sinatra::Base
 
   post '/memos' do
     # 新規メモの保存
-    @memo.add_new_memo(params[:memo_title], params[:memo_content])
+    @memo.add_new_memo(params[:title], params[:content])
 
     redirect '/memos'
   end
 
   get '/memos/:id' do |id|
     # メモの表示
-    @memo_data = @memo.find_memo(id)
-    halt 404 if @memo_data.nil?
+    @memo = @memo.find_memo(id)
+    halt 404 if @memo.nil?
 
     erb :show
   end
@@ -60,7 +60,7 @@ class Router < Sinatra::Base
 
   patch '/memos/:id' do |id|
     # メモの更新
-    @memo.update_memo(id, params[:memo_title], params[:memo_content])
+    @memo.update_memo(id, params[:title], params[:content])
 
     redirect '/memos'
   end
