@@ -39,7 +39,7 @@ http://localhost:4567
 # プロジェクトの構成
 * router.rb\
 リクエストに対してルーティングを処理します。
-* memo.rb\
+* memo_manager.rb\
 メモのデータ操作を行います。
 * config.yml\
 メモのデータを保存するDBの設定を記述するファイルです。

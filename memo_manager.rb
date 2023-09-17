@@ -4,7 +4,7 @@ require 'yaml'
 require 'pg'
 
 # メモのデータ操作クラス
-class Memo
+class MemoManager
   MEMOS_TABLE = 'memos'
   private_constant :MEMOS_TABLE
 

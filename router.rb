@@ -2,14 +2,14 @@
 # frozen_string_literal: true
 
 require 'sinatra/base'
-require_relative './memo'
+require_relative './memo_manager'
 
 class Router < Sinatra::Base
   enable :method_override
 
   def initialize
     super
-    @memo_obj = Memo.new
+    @memo_manager = MemoManager.new
   end
 
   get '/' do
@@ -18,7 +18,7 @@ class Router < Sinatra::Base
 
   get '/memos' do
     # メモ一覧(ホーム画面)の表示
-    @memos = @memo_obj.find_all
+    @memos = @memo_manager.find_all
     @page_title = 'メモ一覧'
 
     erb :memos
@@ -33,14 +33,14 @@ class Router < Sinatra::Base
 
   post '/memos' do
     # 新規メモの保存
-    @memo_obj.add(params[:title], params[:content])
+    @memo_manager.add(params[:title], params[:content])
 
     redirect '/memos'
   end
 
   get '/memos/:id' do |id|
     # メモの表示
-    @memo = @memo_obj.find(id)
+    @memo = @memo_manager.find(id)
     halt 404 if @memo.nil?
 
     erb :show
@@ -48,7 +48,7 @@ class Router < Sinatra::Base
 
   get '/memos/:id/edit' do |id|
     # メモの編集画面の表示
-    @memo = @memo_obj.find(id)
+    @memo = @memo_manager.find(id)
     halt 404 if @memo.nil?
 
     erb :edit
@@ -56,14 +56,14 @@ class Router < Sinatra::Base
 
   patch '/memos/:id' do |id|
     # メモの更新
-    @memo_obj.update(id, params[:title], params[:content])
+    @memo_manager.update(id, params[:title], params[:content])
 
     redirect '/memos'
   end
 
   delete '/memos/:id' do |id|
     # メモの削除
-    @memo_obj.delete(id)
+    @memo_manager.delete(id)
 
     redirect '/memos'
   end
