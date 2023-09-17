@@ -2,6 +2,7 @@
 
 source 'https://rubygems.org'
 
+gem 'cgi'
 gem 'erb_lint'
 gem 'pg'
 gem 'rubocop'

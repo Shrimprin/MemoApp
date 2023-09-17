@@ -2,6 +2,7 @@
 # frozen_string_literal: true
 
 require 'sinatra/base'
+require 'cgi/escape'
 require_relative './memo_manager'
 
 class Router < Sinatra::Base
