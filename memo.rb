@@ -9,7 +9,7 @@ class Memo
   private_constant :MEMOS_TABLE
 
   def find_memos
-    @conn.exec("SELECT * FROM #{MEMOS_TABLE}")
+    @conn.exec("SELECT * FROM #{MEMOS_TABLE} ORDER BY LOWER(title) ASC")
   end
 
   def find_memo(id)
