@@ -18,7 +18,7 @@ class Router < Sinatra::Base
 
   get '/memos' do
     # メモ一覧(ホーム画面)の表示
-    @memos = @memo_obj.find_memos
+    @memos = @memo_obj.find_all
     @page_title = 'メモ一覧'
 
     erb :memos
@@ -33,14 +33,14 @@ class Router < Sinatra::Base
 
   post '/memos' do
     # 新規メモの保存
-    @memo_obj.add_new_memo(params[:title], params[:content])
+    @memo_obj.add(params[:title], params[:content])
 
     redirect '/memos'
   end
 
   get '/memos/:id' do |id|
     # メモの表示
-    @memo = @memo_obj.find_memo(id)
+    @memo = @memo_obj.find(id)
     halt 404 if @memo.nil?
 
     erb :show
@@ -48,7 +48,7 @@ class Router < Sinatra::Base
 
   get '/memos/:id/edit' do |id|
     # メモの編集画面の表示
-    @memo = @memo_obj.find_memo(id)
+    @memo = @memo_obj.find(id)
     halt 404 if @memo.nil?
 
     erb :edit
@@ -56,14 +56,14 @@ class Router < Sinatra::Base
 
   patch '/memos/:id' do |id|
     # メモの更新
-    @memo_obj.update_memo(id, params[:title], params[:content])
+    @memo_obj.update(id, params[:title], params[:content])
 
     redirect '/memos'
   end
 
   delete '/memos/:id' do |id|
     # メモの削除
-    @memo_obj.delete_memo(id)
+    @memo_obj.delete(id)
 
     redirect '/memos'
   end
