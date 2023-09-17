@@ -2,7 +2,7 @@
 # frozen_string_literal: true
 
 require 'sinatra/base'
-require './memo'
+require_relative './memo'
 
 class Router < Sinatra::Base
   enable :method_override
